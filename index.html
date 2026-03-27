@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>機Cash | iPhone手機回租專家 · 快速週轉</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'BlinkMacSystemFont', 'Roboto', sans-serif;
+            background: #0b0c1a;
+            color: #f0f3ff;
+            line-height: 1.4;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* 動態背景光暈 (酷炫鼠標跟隨效果) */
+        .glow-cursor {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle at center, rgba(255, 200, 50, 0.3), rgba(0, 255, 255, 0.1), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s ease-out;
+            filter: blur(40px);
+            opacity: 0.7;
+            will-change: transform;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;   /* 手機友好寬度，置中 */
+            margin: 0 auto;
+            padding: 1.5rem 1.2rem 3rem;
+        }
+
+        /* 品牌區域 */
+        .brand {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #FFE6B0, #FFB347, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 12px rgba(255, 180, 50, 0.6);
+            display: inline-block;
+            animation: textGlowPulse 2.5s infinite alternate;
+        }
+
+        @keyframes textGlowPulse {
+            0% { text-shadow: 0 0 5px rgba(255, 200, 70, 0.4), 0 0 8px rgba(255, 160, 30, 0.3); }
+            100% { text-shadow: 0 0 20px rgba(255, 200, 70, 0.9), 0 0 30px rgba(255, 140, 0, 0.6); }
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #ccd9ff;
+            margin-top: 0.5rem;
+            letter-spacing: 1px;
+            border-bottom: 1px dashed rgba(255, 200, 100, 0.5);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* ===== 封面區域：全部置中 ===== */
+        .hero {
+            margin: 1rem 0 2.5rem;
+            text-align: center;
+        }
+
+        /* 標題 */
+        .hero-title {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #FFFFFF, #FFD966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.3;
+        }
+
+        /* 手機模型容器（置中） */
+        .phone-stage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+            margin: 1.5rem 0;
+        }
+
+        .phone-mockup {
+            width: 240px;
+            height: 480px;
+            background: linear-gradient(145deg, #1a1f2e, #0f1222);
+            border-radius: 40px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 5px rgba(255, 215, 0, 0.2), inset 0 1px 2px rgba(255,255,200,0.1);
+            position: relative;
+            transition: box-shadow 0.2s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+        }
+
+        .phone-mockup::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 42px;
+            background: linear-gradient(135deg, #ffd966, #ffaa33, #ffd966);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: -1;
+        }
+
+        .phone-mockup:hover::before {
+            opacity: 0.8;
+        }
+
+        .phone-screen {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            background: radial-gradient(circle at 20% 30%, #0a0e1a, #03050c);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, transparent, #ffdd88, #ffaa33, #ffdd88, transparent);
+            filter: blur(2px);
+            animation: scanMove 3s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes scanMove {
+            0% { top: -10px; opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .phone-glow-icon {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #FFD966, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.8rem;
+            filter: drop-shadow(0 0 8px gold);
+            animation: iconPulse 1.8s infinite alternate;
+        }
+
+        @keyframes iconPulse {
+            0% { filter: drop-shadow(0 0 2px gold); transform: scale(1);}
+            100% { filter: drop-shadow(0 0 12px #ffaa33); transform: scale(1.05);}
+        }
+
+        .phone-text {
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: rgba(255,215,0,0.2);
+            padding: 5px 12px;
+            border-radius: 40px;
+            color: #ffdf8c;
+            backdrop-filter: blur(4px);
+            margin-bottom: 0.6rem;
+        }
+
+        .cash-flow {
+            font-size: 0.7rem;
+            color: #aaaaff;
+            display: flex;
+            gap: 12px;
+        }
+
+        .cash-flow span {
+            background: rgba(0,255,150,0.2);
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(255,200,100,0.6);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: floatParticle 6s infinite alternate;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.3; }
+            100% { transform: translateY(-30px) translateX(15px) scale(1.2); opacity: 0; }
+        }
+
+        /* 描述與按鈕（置中） */
+        .hero-description {
+            font-size: 1rem;
+            color: #b9c8ff;
+            margin: 1rem 0 1.5rem;
+            line-height: 1.5;
+        }
+
+        .line-mega-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(105deg, #00c300, #1e9b1e);
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 80px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.25s ease;
+            letter-spacing: 1px;
+            backdrop-filter: blur(2px);
+            cursor: pointer;
+            animation: btnPulse 1.6s infinite ease-in-out;
+        }
+
+        .line-mega-btn i {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 0 6px white);
+        }
+
+        @keyframes btnPulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 100, 0.6), 0 0 15px #00ff80; transform: scale(1); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 255, 100, 0), 0 0 25px #b3ff00; transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 100, 0), 0 0 15px #00ff80; transform: scale(1); }
+        }
+
+        .line-mega-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 35px #1eff00, 0 12px 28px black;
+            background: linear-gradient(105deg, #00dd33, #0a8a0a);
+        }
+
+        /* 服務卡片區 (置中) */
+        .services {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 2rem 0 2rem;
+        }
+
+        .service-card {
+            background: rgba(12, 15, 35, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            flex: 1 1 260px;
+            max-width: 300px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffb347, #ffdd77, #ffb347, #ffdd77);
+            border-radius: 1.5rem;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .service-card:hover::before {
+            opacity: 0.7;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: transparent;
+            box-shadow: 0 15px 35px rgba(255, 180, 50, 0.4), 0 0 0 2px rgba(255, 215, 0, 0.5);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #FFD966, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.8rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            color: #cddcff;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .card-tag {
+            background: rgba(255, 200, 50, 0.2);
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            border-left: 3px solid #ffb347;
+        }
+
+        /* 流程區 */
+        .feature-section {
+            margin: 2.5rem 0 2rem;
+            text-align: center;
+        }
+        .feature-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            border-bottom: 2px solid #ffb347;
+            padding-bottom: 6px;
+        }
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .step-item {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            width: 140px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            transition: 0.2s;
+        }
+        .step-item:hover {
+            border-color: gold;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+            transform: scale(1.02);
+        }
+        .step-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, gold, #ffae42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .step-item div:first-of-type {
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+        .step-item small {
+            font-size: 0.7rem;
+            color: #bbb;
+        }
+
+        /* 第二個LINE醒目區塊 */
+        .line-second-area {
+            background: linear-gradient(120deg, rgba(0, 30, 20, 0.7), rgba(0, 0, 0, 0.6));
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin: 2rem 0 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 150, 0.4);
+            box-shadow: 0 0 30px rgba(0, 255, 100, 0.2);
+        }
+        .line-second-area h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .line-second-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #06c755;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            margin-top: 0.8rem;
+            transition: 0.2s;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+        }
+        .line-second-btn i {
+            font-size: 1.2rem;
+        }
+        .line-second-btn:hover {
+            background: #00b341;
+            transform: scale(1.02);
+            box-shadow: 0 0 18px #00ff88;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 200, 100, 0.2);
+            font-size: 0.7rem;
+            color: #8f9bb5;
+        }
+
+        /* 手機優化 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem 1rem 2rem;
+            }
+            .logo {
+                font-size: 2.2rem;
+            }
+            .hero-title h1 {
+                font-size: 1.6rem;
+            }
+            .phone-mockup {
+                width: 210px;
+                height: 420px;
+            }
+            .phone-glow-icon {
+                font-size: 2.2rem;
+            }
+            .phone-text {
+                font-size: 0.7rem;
+            }
+            .cash-flow {
+                font-size: 0.6rem;
+                gap: 6px;
+            }
+            .hero-description {
+                font-size: 0.9rem;
+            }
+            .line-mega-btn {
+                padding: 0.7rem 1.5rem;
+                font-size: 1.1rem;
+            }
+            .service-card {
+                max-width: 100%;
+            }
+            .step-item {
+                width: 120px;
+                padding: 0.8rem;
+            }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.5s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0c1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb347;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glow-cursor" id="glowCursor"></div>
+
+<div class="container">
+    <div class="brand fade-up">
+        <div class="logo">機Cash</div>
+        <div class="subtitle">iPhone 13以上 · 手機回租專家</div>
+    </div>
+
+    <!-- 封面區域：全部置中 -->
+    <div class="hero fade-up">
+        <div class="hero-title">
+            <h1>iPhone 13以上<br>手機回租 · 資金即時週轉</h1>
+        </div>
+
+        <!-- 手機模型 -->
+        <div class="phone-stage" id="phoneStage">
+            <div class="phone-mockup" id="phoneMockup">
+                <div class="phone-screen">
+                    <div class="scan-line"></div>
+                    <div class="phone-glow-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <div class="phone-text">機Cash 回租方案</div>
+                    <div class="cash-flow">
+                        <span><i class="fas fa-check-circle"></i> 高額回租</span>
+                        <span><i class="fas fa-bolt"></i> 快速審核</span>
+                    </div>
+                    <div class="particles" id="particlesContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 描述與按鈕 -->
+        <div class="hero-description">
+            ✨ 免賣斷 · 快速估價 · 保密安心 ✨<br>保留手機使用權，最快當日撥款，靈活贖回
+        </div>
+        <a href="https://lin.ee/dO4TKk3I" target="_blank" rel="noopener noreferrer" class="line-mega-btn">
+            <i class="fab fa-line"></i> 加入LINE · 立即諮詢
+        </a>
+    </div>
+
+    <!-- 服務卡片區 -->
+    <div class="services">
+        <div class="service-card fade-up">
+            <div class="service-icon"><i class="fas fa-hand-holding-usd"></i></div>
+            <h3>手機回租服務</h3>
+            <p>將您持有的iPhone 13以上手機設定回租，快速取得週轉資金，保留手機使用權，分期贖回。合法透明，安心保障，讓資產靈活變現。</p>
+            <div class="card-tag">💰 快速撥款 · 保密安全</div>
+        </div>
+        <div class="service-card fade-up">
+            <div class="service-icon"><i class="fas fa-bolt"></i></div>
+            <h3>極速審核</h3>
+            <p>專人線上評估，只需提供手機型號及外觀，10分鐘快速報價。配合LINE一對一客服，任何時段都可諮詢，手續簡便。</p>
+            <div class="card-tag">⚡ 免出門 · 線上簽約</div>
+        </div>
+    </div>
+
+    <!-- 流程區 -->
+    <div class="feature-section fade-up">
+        <div class="feature-title">✦ 三大優勢流程 ✦</div>
+        <div class="steps">
+            <div class="step-item"><div class="step-num">01</div><div>📲 LINE 諮詢估價</div><small>提供手機現況，快速報價</small></div>
+            <div class="step-item"><div class="step-num">02</div><div>📝 簽約設定</div><small>回租合約保障</small></div>
+            <div class="step-item"><div class="step-num">03</div><div>💵 現金撥款</div><small>當天完成，即刻使用</small></div>
+        </div>
+    </div>
+
+    <!-- 第二個LINE醒目區塊 -->
+    <div class="line-second-area fade-up">
+        <h3><i class="fab fa-line" style="margin-right: 6px;"></i> 任何機型問題？立即聯繫專員</h3>
+        <p style="font-size: 0.85rem;">iPhone 13以上手機回租專人1對1評估｜限時免手續費活動中</p>
+        <a href="https://lin.ee/dO4TKk3I" target="_blank" rel="noopener noreferrer" class="line-second-btn">
+            <i class="fab fa-line"></i> 點我加LINE · 專屬優惠
+        </a>
+        <p style="margin-top: 12px; font-size: 0.7rem;">📢 加入LINE即時掌握最新回租利率 & 優惠方案</p>
+    </div>
+
+    <div style="margin: 1.5rem 0 1rem; text-align: center;">
+        <div style="display: inline-block; background: rgba(0,0,0,0.4); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: 0.75rem;">
+            <i class="fas fa-question-circle" style="color: #ffb347;"></i> 適用iPhone 13以上型號 · 快速估價
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 機Cash | 專業手機回租服務 | 合法合約保障隱私</p>
+        <p style="margin-top: 6px;"><i class="fab fa-line"></i> 官方LINE : @428avoex | 服務時間 24小時不打烊
+    </footer>
+</div>
+
+<script>
+    // 1. 鼠標跟隨光暈效果 (手機端忽略觸控時的跟隨，但保留PC端)
+    const cursorGlow = document.getElementById('glowCursor');
+    let mouseX = 0, mouseY = 0;
+    let glowX = 0, glowY = 0;
+    function updateGlowPosition() {
+        glowX += (mouseX - glowX) * 0.08;
+        glowY += (mouseY - glowY) * 0.08;
+        if (cursorGlow) cursorGlow.style.transform = `translate(${glowX}px, ${glowY}px)`;
+        requestAnimationFrame(updateGlowPosition);
+    }
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function autoWander() {
+        if (!cursorGlow) return;
+        if (mouseX === 0 && mouseY === 0 && window.innerWidth > 768) {
+            const time = Date.now() * 0.002;
+            const wanderX = window.innerWidth / 2 + Math.sin(time) * 120;
+            const wanderY = window.innerHeight / 2 + Math.cos(time * 0.7) * 80;
+            mouseX = wanderX;
+            mouseY = wanderY;
+        }
+        requestAnimationFrame(autoWander);
+    }
+    autoWander();
+    updateGlowPosition();
+
+    // 2. 交互手機特效：跟隨鼠標3D傾斜（僅PC，手機端保持靜態避免干擾）
+    const phone = document.getElementById('phoneMockup');
+    const stage = document.getElementById('phoneStage');
+    if (phone && stage && window.innerWidth > 768) {
+        let phoneRotateX = 0;
+        let phoneRotateY = 0;
+        let targetRotateX = 0;
+        let targetRotateY = 0;
+        
+        stage.addEventListener('mousemove', (e) => {
+            const rect = stage.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const deltaX = (e.clientX - centerX) / (rect.width / 2);
+            const deltaY = (e.clientY - centerY) / (rect.height / 2);
+            targetRotateY = deltaX * 10;
+            targetRotateX = -deltaY * 8;
+            phone.style.boxShadow = '0 30px 45px rgba(0,0,0,0.6), 0 0 0 4px rgba(255,215,0,0.6), inset 0 1px 2px gold';
+        });
+        
+        stage.addEventListener('mouseleave', () => {
+            targetRotateX = 0;
+            targetRotateY = 0;
+            phone.style.boxShadow = '0 25px 45px rgba(0, 0, 0, 0.5), 0 0 0 5px rgba(255, 215, 0, 0.2), inset 0 1px 2px rgba(255,255,200,0.1)';
+        });
+        
+        function animatePhone() {
+            phoneRotateX += (targetRotateX - phoneRotateX) * 0.1;
+            phoneRotateY += (targetRotateY - phoneRotateY) * 0.1;
+            phone.style.transform = `rotateX(${phoneRotateX}deg) rotateY(${phoneRotateY}deg) translateZ(8px)`;
+            requestAnimationFrame(animatePhone);
+        }
+        animatePhone();
+    } else if (phone) {
+        // 手機上保持平面，但保留懸停光效
+        phone.style.transform = 'none';
+    }
+
+    // 3. 漂浮粒子
+    const particlesDiv = document.getElementById('particlesContainer');
+    if (particlesDiv) {
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            particle.style.animationDelay = `${Math.random() * 2}s`;
+            particle.style.opacity = Math.random() * 0.5 + 0.2;
+            particlesDiv.appendChild(particle);
+            setTimeout(() => { if(particle) particle.remove(); }, 5000);
+        }
+        setInterval(createParticle, 400);
+        for(let i=0;i<10;i++) setTimeout(createParticle, i*150);
+    }
+
+    // 4. 滾動淡入
+    const fadeElements = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+    fadeElements.forEach(el => observer.observe(el));
+
+    // 5. 按鈕漣漪效果
+    const allButtons = document.querySelectorAll('.line-mega-btn, .line-second-btn');
+    allButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.style.position = 'absolute';
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+            ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'radial-gradient(circle, rgba(255,255,200,0.7) 0%, rgba(255,200,0,0) 70%)';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.transition = 'transform 0.5s ease-out, opacity 0.6s';
+            ripple.style.opacity = '0.8';
+            btn.style.position = 'relative';
+            btn.style.overflow = 'hidden';
+            btn.appendChild(ripple);
+            requestAnimationFrame(() => {
+                ripple.style.transform = 'scale(4)';
+                ripple.style.opacity = '0';
+            });
+            setTimeout(() => ripple.remove(), 500);
+        });
+    });
+
+    // 6. 卡片動態邊框光效 (PC)
+    const cards = document.querySelectorAll('.service-card, .step-item');
+    if (window.innerWidth > 768) {
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xRad = (x / rect.width) * 100;
+                const yRad = (y / rect.height) * 100;
+                card.style.borderImageSource = `radial-gradient(circle at ${xRad}% ${yRad}%, rgba(255,215,0,0.8), rgba(255,100,0,0.3))`;
+                card.style.borderImageSlice = '1';
+                card.style.borderWidth = '1px';
+                card.style.borderStyle = 'solid';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.borderImageSource = '';
+                card.style.borderStyle = '';
+                if (card.classList.contains('service-card')) card.style.border = '1px solid rgba(255, 215, 0, 0.3)';
+                else card.style.border = '1px solid rgba(255, 215, 0, 0.4)';
+            });
+        });
+    }
+
+    // 主按鈕閃爍強化
+    const heroBtn = document.querySelector('.line-mega-btn');
+    if (heroBtn) {
+        setInterval(() => {
+            heroBtn.style.transition = 'box-shadow 0.2s';
+            heroBtn.style.boxShadow = '0 0 28px #1eff00, 0 0 12px #ffdd55';
+            setTimeout(() => {
+                heroBtn.style.boxShadow = '0 0 20px rgba(0, 255, 0, 0.5), 0 8px 20px rgba(0,0,0,0.3)';
+            }, 200);
+        }, 2200);
+    }
+
+    // 手機圖標浮動
+    const phoneIcon = document.querySelector('.phone-glow-icon');
+    if (phoneIcon) {
+        setInterval(() => {
+            phoneIcon.style.transform = 'scale(1.02)';
+            setTimeout(() => { if(phoneIcon) phoneIcon.style.transform = 'scale(1)'; }, 300);
+        }, 1800);
+    }
+
+    window.dispatchEvent(new Event('scroll'));
+</script>
+</body>
+</html>
